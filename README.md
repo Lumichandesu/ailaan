@@ -75,10 +75,42 @@ others with `NEXT_PUBLIC_`.
 ## Deploying to Vercel
 1. Import the repo. Vercel detects Next.js; no build config needed.
 2. Add the environment variables above under **Settings → Environment Variables**.
-3. **Rate limiting:** serverless functions are stateless, so the in-memory
-   limiter is not effective in production. Set the Upstash variables (free tier
-   is enough) to get real distributed limits.
-4. Optionally add Vercel Firewall / WAF rate-limit rules as a second layer.
+   Set `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN` — they are required in
+   production, not optional (see below).
+3. Optionally add Vercel Firewall / WAF rate-limit rules as a second layer.
+
+## Production caveats
+
+Two things behave differently in production than in local development.
+
+### Rate limiting needs Upstash in production
+
+`lib/rateLimit.js` falls back to an in-memory counter when the Upstash variables
+are unset. That fallback is fine locally, but on serverless it is **not real
+protection**: every function instance has its own memory, so the effective limit
+becomes `RATE_LIMIT_MAX × the number of warm instances`. This endpoint spends
+Google API quota, so `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are
+**required in production**, not recommended.
+
+To confirm the distributed limiter is active after a deploy, send more than
+`RATE_LIMIT_MAX` requests within a minute and check for `429`:
+
+```bash
+for i in $(seq 1 40); do
+  curl -s -o /dev/null -w "%{http_code} " -X POST https://<your-domain>/api/flood-status \
+    -H "Content-Type: application/json" -d '{"district":"nowshera"}'
+done; echo
+```
+
+A Vercel Firewall / WAF rate-limit rule on `/api/flood-status` is worth adding as
+a second layer so abuse is blocked before it reaches the function.
+
+### Vercel plan
+
+The project runs on the **Hobby** plan, which is licensed for **non-commercial
+use only**. If Ailaan ever takes payment, runs ads, or is otherwise commercial,
+the project must move to **Pro**. Hobby also has a lower function-duration cap
+(~10 s default); the upstream timeout is `UPSTREAM_TIMEOUT_MS` (default 10 s).
 
 ## Run it
 ```bash
