@@ -179,6 +179,15 @@ export default function Hero() {
     };
   }, []);
 
+  const selectLang = (key) => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      // Stop any utterance in the previous language before switching.
+      window.speechSynthesis.cancel();
+    }
+    setSpeaking(false);
+    setLang(key);
+  };
+
   const handleCtaClick = () => {
     autoSpeakRef.current = true;
     checkStatus(selected);
@@ -370,7 +379,7 @@ export default function Hero() {
               {LANGUAGES.map((l) => (
                 <button
                   key={l.key}
-                  onClick={() => setLang(l.key)}
+                  onClick={() => selectLang(l.key)}
                   className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition ${
                     lang === l.key
                       ? "bg-white/20 text-mist"
