@@ -36,6 +36,9 @@ glassmorphic UI and an embedded live demo of the actual product concept.
   layer. Real risk levels come from the `/api/flood-status` route handler,
   which queries the Google Flood Forecasting API and falls back to simulated
   data (flagged as such) when that is unavailable.
+- The WhatsApp subscribe form is **demo only**: it validates the number and
+  shows a confirmation, but nothing is sent and no number is stored. A real
+  sign-up needs a backend.
 
 ## Flood status API
 `app/api/flood-status/route.js` is a Next.js Route Handler — there is no

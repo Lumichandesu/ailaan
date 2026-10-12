@@ -193,6 +193,8 @@ export default function Hero() {
     checkStatus(selected);
   };
 
+  // Demo only: validates the number and shows the confirmation, but does not
+  // send anything anywhere yet. A real WhatsApp sign-up needs a backend (#8).
   const handleSubscribe = (e) => {
     e.preventDefault();
     if (phone.replace(/\D/g, "").length < 10) return;
@@ -252,7 +254,7 @@ export default function Hero() {
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/6 px-3 py-2 text-xs font-semibold text-mist/90 backdrop-blur-xl transition hover:bg-white/12 sm:text-sm"
             >
-              <span className="hidden text-mist/50 sm:inline">By</span>
+              <span className="hidden text-mist/50 sm:inline">By</span>{" "}
               Jawad Ahmad
             </a>
           </nav>
@@ -319,6 +321,8 @@ export default function Hero() {
                   <button
                     key={key}
                     onClick={() => checkStatus(key)}
+                    aria-pressed={isActive}
+                    aria-label={`Read the warning for ${districtName(key)}`}
                     className={`flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[11px] font-semibold transition sm:text-xs ${
                       isActive
                         ? "border-signal/70 bg-signal/15 text-mist"
@@ -380,6 +384,7 @@ export default function Hero() {
                 <button
                   key={l.key}
                   onClick={() => selectLang(l.key)}
+                  aria-pressed={lang === l.key}
                   className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition ${
                     lang === l.key
                       ? "bg-white/20 text-mist"
@@ -392,7 +397,9 @@ export default function Hero() {
             </div>
 
             <div
-              className="min-h-[3.2rem] rounded-xl border border-white/10 bg-ink/40 p-2.5 text-[12.5px] leading-snug text-mist/85 sm:min-h-[4.2rem] sm:p-3 sm:text-[13px]"
+                role="status"
+                aria-live="polite"
+                className="min-h-[3.2rem] rounded-xl border border-white/10 bg-ink/40 p-2.5 text-[12.5px] leading-snug text-mist/85 sm:min-h-[4.2rem] sm:p-3 sm:text-[13px]"
               dir={LANGUAGES.find((l) => l.key === lang)?.dir || "ltr"}
             >
               {demo.status === "loading" && (
@@ -448,13 +455,19 @@ export default function Hero() {
               {!subscribeOpen && !subscribed && (
                 <button
                   onClick={() => setSubscribeOpen(true)}
+                  aria-expanded={subscribeOpen}
+                  aria-controls="subscribe-form"
                   className="flex items-center gap-1.5 text-xs font-semibold text-signal-soft hover:text-mist"
                 >
                   <Phone size={13} /> Get this on WhatsApp
                 </button>
               )}
               {subscribeOpen && !subscribed && (
-                <form onSubmit={handleSubscribe} className="flex gap-2">
+                <form
+                  id="subscribe-form"
+                  onSubmit={handleSubscribe}
+                  className="flex gap-2"
+                >
                   <input
                     type="tel"
                     inputMode="tel"
@@ -473,9 +486,16 @@ export default function Hero() {
                 </form>
               )}
               {subscribed && (
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-risk-low">
-                  <CheckCircle2 size={14} /> You&rsquo;re on the list —
-                  alerts head to your WhatsApp.
+                <p
+                  role="status"
+                  aria-live="polite"
+                  className="flex items-start gap-1.5 text-xs font-semibold text-risk-low"
+                >
+                  <CheckCircle2 size={14} className="mt-px shrink-0" />
+                  <span>
+                    Demo only — this form doesn&rsquo;t send anything yet. A real
+                    WhatsApp sign-up is coming soon.
+                  </span>
                 </p>
               )}
             </div>
