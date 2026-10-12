@@ -23,8 +23,10 @@ import {
   buildAlert,
   dataTier,
   districtName,
-  riskFromStatus,
+  pickVoice,
   readingLine,
+  riskFromStatus,
+  speechLang,
 } from "@/lib/alerts";
 
 function GithubMark(props) {
@@ -145,11 +147,15 @@ export default function Hero() {
   const speak = () => {
     if (!demo.alert || typeof window === "undefined") return;
     if (!("speechSynthesis" in window)) return;
+    // Cancel any in-flight utterance so a second press does not queue audio
+    // behind the first.
     window.speechSynthesis.cancel();
-    const text = demo.alert[lang];
-    const utter = new SpeechSynthesisUtterance(text);
+    const utter = new SpeechSynthesisUtterance(demo.alert[lang]);
+    const target = speechLang(lang);
+    const voice = pickVoice(window.speechSynthesis.getVoices?.(), target);
+    if (voice) utter.voice = voice;
+    utter.lang = target;
     utter.rate = 0.92;
-    utter.lang = lang === "ps" ? "ur-PK" : "en-US";
     utter.onstart = () => setSpeaking(true);
     utter.onend = () => setSpeaking(false);
     utter.onerror = () => setSpeaking(false);
