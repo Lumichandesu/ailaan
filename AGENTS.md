@@ -47,8 +47,14 @@ stale values as a live warning. This is the theme of #4, #9, #17.
 Vercel. All env vars server-side — never `NEXT_PUBLIC_`. Uses
 `GOOGLE_FLOOD_API_KEY`, `FLOOD_CACHE_SECONDS`, `UPSTREAM_TIMEOUT_MS`,
 `UPSTASH_REDIS_REST_URL`/`TOKEN`, `RATE_LIMIT_MAX`, `GOOGLE_FLOOD_BASE_URL`
-(see `.env.example`). Caveats (#18): Hobby is non-commercial; in-memory rate
-limiting is per-instance and ineffective on serverless.
+(see `.env.example`). See "Production caveats" below.
+
+## Production caveats (#18)
+- **Rate limiting:** `UPSTASH_REDIS_REST_URL`/`TOKEN` are **required in
+  production** — the in-memory fallback is per-instance and ineffective on
+  serverless. Verify with >`RATE_LIMIT_MAX` requests in a minute → expect `429`.
+- **Vercel plan:** Hobby is **non-commercial** only. Move to Pro if Ailaan ever
+  becomes commercial (payment/ads). Hobby caps function duration ~10 s.
 
 ## Workflow notes
 - Private repo; PAT needs **Issues: write** + **Contents: write**. The GitHub
