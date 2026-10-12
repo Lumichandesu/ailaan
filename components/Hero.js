@@ -178,6 +178,8 @@ export default function Hero() {
     checkStatus(selected);
   };
 
+  // Demo only: validates the number and shows the confirmation, but does not
+  // send anything anywhere yet. A real WhatsApp sign-up needs a backend (#8).
   const handleSubscribe = (e) => {
     e.preventDefault();
     if (phone.replace(/\D/g, "").length < 10) return;
@@ -472,10 +474,13 @@ export default function Hero() {
                 <p
                   role="status"
                   aria-live="polite"
-                  className="flex items-center gap-1.5 text-xs font-semibold text-risk-low"
+                  className="flex items-start gap-1.5 text-xs font-semibold text-risk-low"
                 >
-                  <CheckCircle2 size={14} /> You&rsquo;re on the list —
-                  alerts head to your WhatsApp.
+                  <CheckCircle2 size={14} className="mt-px shrink-0" />
+                  <span>
+                    Demo only — this form doesn&rsquo;t send anything yet. A real
+                    WhatsApp sign-up is coming soon.
+                  </span>
                 </p>
               )}
             </div>
