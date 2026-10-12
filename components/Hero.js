@@ -237,7 +237,7 @@ export default function Hero() {
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/6 px-3 py-2 text-xs font-semibold text-mist/90 backdrop-blur-xl transition hover:bg-white/12 sm:text-sm"
             >
-              <span className="hidden text-mist/50 sm:inline">By</span>
+              <span className="hidden text-mist/50 sm:inline">By</span>{" "}
               Jawad Ahmad
             </a>
           </nav>
