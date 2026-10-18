@@ -67,6 +67,20 @@ test("buildAlert returns null for a district it has no copy for", () => {
   assert.equal(buildAlert("atlantis", "high"), null);
 });
 
+test("all Roman-Pashto alert text uses ASCII characters only", () => {
+  for (const district of DEMO_DISTRICTS) {
+    for (const risk of ["high", "medium", "low"]) {
+      for (const sample of [false, true]) {
+        assert.match(
+          buildAlert(district, risk, sample).roman,
+          /^[\x00-\x7F]*$/,
+          `${district} ${risk} ${sample ? "sample" : "live"} alert should be ASCII`,
+        );
+      }
+    }
+  }
+});
+
 test("sample alerts are prefixed with the spoken caveat in every language", () => {
   for (const lang of ["en", "roman", "ps"]) {
     const sample = buildAlert("nowshera", "high", true);
